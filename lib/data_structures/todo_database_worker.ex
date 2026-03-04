@@ -1,9 +1,8 @@
 defmodule DataStructures.TodoDatabaseWorker do
-  alias DataStructures.TodoDatabaseWorker
   use GenServer
 
-  def start(db_folder) do
-    GenServer.start(TodoDatabaseWorker, db_folder)
+  def start_link(db_folder) do
+    GenServer.start_link(__MODULE__, db_folder)
   end
 
   def store(db_worker_pid, key, data) do

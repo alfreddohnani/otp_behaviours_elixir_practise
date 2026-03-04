@@ -44,8 +44,8 @@ defmodule DataStructures.GenServerTodoList do
     {:noreply, {list_name, state}}
   end
 
-  def start(list_name) do
-    GenServer.start(GenServerTodoList, list_name)
+  def start_link(list_name) do
+    GenServer.start_link(GenServerTodoList, list_name)
   end
 
   def add_entry(pid, %TodoEntry{} = entry) do

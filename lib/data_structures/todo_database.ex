@@ -4,9 +4,9 @@ defmodule DataStructures.TodoDatabase do
 
   @db_folder "./persist"
 
-  def start do
+  def start_link do
     IO.puts("Starting todo database server")
-    GenServer.start(__MODULE__, nil, name: __MODULE__)
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def store(key, data) do
@@ -28,7 +28,7 @@ defmodule DataStructures.TodoDatabase do
     key_pid_map =
       0..2
       |> Enum.map(fn key ->
-        {:ok, db_worker_pid} = TodoDatabaseWorker.start(@db_folder)
+        {:ok, db_worker_pid} = TodoDatabaseWorker.start_link(@db_folder)
         IO.puts("Starting todo database worker: #{inspect(db_worker_pid)}")
         {key, db_worker_pid}
       end)
