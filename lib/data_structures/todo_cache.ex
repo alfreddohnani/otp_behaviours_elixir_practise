@@ -5,6 +5,7 @@ defmodule DataStructures.TodoCache do
 
   @impl GenServer
   def init(_) do
+    IO.puts("Starting todo cache.")
     TodoDatabase.start()
     {:ok, %{}}
   end
@@ -26,11 +27,12 @@ defmodule DataStructures.TodoCache do
     end
   end
 
-  def start do
-    GenServer.start(__MODULE__, nil)
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
-  def server_process(todo_cache_pid, todo_list_name) do
-    GenServer.call(todo_cache_pid, {:server_process, todo_list_name})
+  def server_process(todo_list_name) do
+    IO.puts("Starting todo server process for #{todo_list_name}")
+    GenServer.call(__MODULE__, {:server_process, todo_list_name})
   end
 end

@@ -5,6 +5,7 @@ defmodule DataStructures.TodoDatabase do
   @db_folder "./persist"
 
   def start do
+    IO.puts("Starting todo database server")
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 
@@ -28,6 +29,7 @@ defmodule DataStructures.TodoDatabase do
       0..2
       |> Enum.map(fn key ->
         {:ok, db_worker_pid} = TodoDatabaseWorker.start(@db_folder)
+        IO.puts("Starting todo database worker: #{inspect(db_worker_pid)}")
         {key, db_worker_pid}
       end)
       |> Enum.into(%{})
