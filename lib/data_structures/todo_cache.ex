@@ -1,12 +1,10 @@
 defmodule DataStructures.TodoCache do
-  alias DataStructures.TodoDatabase
   alias DataStructures.GenServerTodoList
   use GenServer
 
   @impl GenServer
   def init(_) do
     IO.puts("Starting todo cache.")
-    TodoDatabase.start_link()
     {:ok, %{}}
   end
 

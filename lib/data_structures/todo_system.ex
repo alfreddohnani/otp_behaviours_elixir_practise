@@ -1,6 +1,7 @@
 defmodule DataStructures.TodoSystem do
   use Supervisor
 
+  alias DataStructures.TodoDatabase
   alias DataStructures.TodoCache
 
   def start_link do
@@ -9,6 +10,6 @@ defmodule DataStructures.TodoSystem do
 
   @impl Supervisor
   def init(_) do
-    Supervisor.init([TodoCache], strategy: :one_for_one)
+    Supervisor.init([TodoDatabase, TodoCache], strategy: :one_for_one)
   end
 end
