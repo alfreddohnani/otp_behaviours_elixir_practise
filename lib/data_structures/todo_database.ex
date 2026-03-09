@@ -28,14 +28,12 @@ defmodule DataStructures.TodoDatabase do
     key_pid_map =
       0..2
       |> Enum.map(fn key ->
-        {:ok, db_worker_pid} = TodoDatabaseWorker.start_link(@db_folder)
-        IO.puts("Starting todo database worker: #{inspect(db_worker_pid)}")
+        {:ok, db_worker_pid} = TodoDatabaseWorker.start_link({@db_folder, key})
         {key, db_worker_pid}
       end)
       |> Enum.into(%{})
 
-    IO.puts("key pid map")
-    IO.inspect(key_pid_map)
+    IO.puts("key pid map #{inspect(key_pid_map)}")
 
     {:ok, key_pid_map}
   end
