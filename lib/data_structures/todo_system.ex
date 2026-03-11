@@ -16,6 +16,7 @@ defmodule DataStructures.TodoSystem do
         TodoProcessRegistry,
         TodoDbSupervisor,
         TodoCache
+        # TodoMetrics
       ],
       strategy: :one_for_one
     )

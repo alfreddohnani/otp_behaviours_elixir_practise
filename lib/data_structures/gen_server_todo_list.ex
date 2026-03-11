@@ -1,9 +1,10 @@
 defmodule DataStructures.GenServerTodoList do
-  use GenServer
-  alias DataStructures.TodoDatabase
+  use GenServer, restart: :temporary
+
+  alias DataStructures.TodoDbSupervisor
+  alias DataStructures.TodoProcessRegistry
   alias DataStructures.TodoList
   alias DataStructures.TodoEntry
-  alias DataStructures.GenServerTodoList
 
   @impl GenServer
   def init(list_name) do
@@ -12,14 +13,14 @@ defmodule DataStructures.GenServerTodoList do
 
   @impl GenServer
   def handle_continue(:init, {list_name, nil}) do
-    todo_list = TodoDatabase.get(list_name) || TodoList.new()
+    todo_list = TodoDbSupervisor.get(list_name) || TodoList.new()
     {:noreply, {list_name, todo_list}}
   end
 
   @impl GenServer
   def handle_cast({:add_entry, entry}, {list_name, state}) do
     new_list = TodoList.add_entry(state, entry)
-    TodoDatabase.store(list_name, new_list)
+    TodoDbSupervisor.store(list_name, new_list)
     {:noreply, {list_name, new_list}}
   end
 
@@ -44,8 +45,12 @@ defmodule DataStructures.GenServerTodoList do
     {:noreply, {list_name, state}}
   end
 
+  defp via_tuple(list_name) do
+    TodoProcessRegistry.via_tuple({__MODULE__, list_name})
+  end
+
   def start_link(list_name) do
-    GenServer.start_link(GenServerTodoList, list_name)
+    GenServer.start_link(__MODULE__, list_name, name: via_tuple(list_name))
   end
 
   def add_entry(pid, %TodoEntry{} = entry) do
