@@ -1,30 +1,40 @@
 defmodule DataStructures.TodoDatabaseWorker do
-  alias DataStructures.TodoProcessRegistry
   use GenServer
 
-  def start_link({db_folder, worker_id}) do
-    IO.puts("Starting todo database worker: #{inspect(worker_id)}")
+  def start_link(db_folder: db_folder) do
+    IO.puts("Starting todo database worker")
 
     GenServer.start_link(
       __MODULE__,
-      db_folder,
-      name: via_tuple(worker_id)
+      db_folder
     )
   end
 
-  defp via_tuple(worker_id) do
-    TodoProcessRegistry.via_tuple({__MODULE__, worker_id})
-  end
-
   def store(db_worker_id, key, data) do
-    GenServer.cast(via_tuple(db_worker_id), {:store, key, data})
+    GenServer.cast(db_worker_id, {:store, key, data})
   end
 
   def get(db_worker_id, key) do
-    GenServer.call(via_tuple(db_worker_id), {:get, key})
+    GenServer.call(db_worker_id, {:get, key})
   end
 
   @impl GenServer
+  @spec init(
+          binary()
+          | maybe_improper_list(
+              binary() | maybe_improper_list(any(), binary() | []) | char(),
+              binary() | []
+            )
+        ) ::
+          {:ok,
+           %{
+             db_folder:
+               binary()
+               | maybe_improper_list(
+                   binary() | maybe_improper_list(any(), binary() | []) | char(),
+                   binary() | []
+                 )
+           }}
   def init(db_folder) do
     File.mkdir_p!(db_folder)
     {:ok, %{db_folder: db_folder}}

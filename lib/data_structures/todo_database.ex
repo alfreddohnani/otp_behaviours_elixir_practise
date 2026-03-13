@@ -28,7 +28,7 @@ defmodule DataStructures.TodoDatabase do
     key_pid_map =
       0..2
       |> Enum.map(fn key ->
-        {:ok, db_worker_pid} = TodoDatabaseWorker.start_link({@db_folder, key})
+        {:ok, db_worker_pid} = TodoDatabaseWorker.start_link(db_folder: @db_folder)
         {key, db_worker_pid}
       end)
       |> Enum.into(%{})

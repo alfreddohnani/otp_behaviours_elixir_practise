@@ -45,24 +45,3 @@ defmodule DataStructures.ServerProcessTodo do
     ServerProcess.call(pid, {:entries, date})
   end
 end
-
-# IO.puts("### Todo Server Process ###")
-
-# alias DataStructures.TodoEntry
-# alias DataStructures.ServerProcessTodo
-# pid = ServerProcessTodo.start()
-
-# ServerProcessTodo.add_entry(pid, %TodoEntry{date: ~D[2026-02-28], title: "Go to the gym"})
-# ServerProcessTodo.add_entry(pid, %TodoEntry{date: ~D[2026-03-01], title: "Get some groceries"})
-# ServerProcessTodo.add_entry(pid, %TodoEntry{date: ~D[2026-03-01], title: "Study the Bible"})
-
-# date = ~D[2026-03-01]
-# entries = ServerProcessTodo.entries(pid, date)
-# IO.puts("entries for #{date} : #{inspect(entries)}")
-
-# IO.puts("update date for Bible study")
-# date = ~D[2026-03-02]
-# ServerProcessTodo.update_entry(pid, 3, :date, date)
-
-# entries = ServerProcessTodo.entries(pid, date)
-# IO.puts("entries for #{date} after update : #{inspect(entries)}")

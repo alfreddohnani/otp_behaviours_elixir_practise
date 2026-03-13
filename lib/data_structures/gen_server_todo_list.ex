@@ -1,7 +1,7 @@
 defmodule DataStructures.GenServerTodoList do
   use GenServer, restart: :temporary
 
-  alias DataStructures.TodoDbSupervisor
+  alias DataStructures.TodoDbPoolboy
   alias DataStructures.TodoProcessRegistry
   alias DataStructures.TodoList
   alias DataStructures.TodoEntry
@@ -13,14 +13,14 @@ defmodule DataStructures.GenServerTodoList do
 
   @impl GenServer
   def handle_continue(:init, {list_name, nil}) do
-    todo_list = TodoDbSupervisor.get(list_name) || TodoList.new()
+    todo_list = TodoDbPoolboy.get(list_name) || TodoList.new()
     {:noreply, {list_name, todo_list}}
   end
 
   @impl GenServer
   def handle_cast({:add_entry, entry}, {list_name, state}) do
     new_list = TodoList.add_entry(state, entry)
-    TodoDbSupervisor.store(list_name, new_list)
+    TodoDbPoolboy.store(list_name, new_list)
     {:noreply, {list_name, new_list}}
   end
 

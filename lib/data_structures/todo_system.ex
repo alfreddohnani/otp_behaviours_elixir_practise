@@ -1,9 +1,10 @@
 defmodule DataStructures.TodoSystem do
   use Supervisor
 
-  alias DataStructures.TodoDbSupervisor
+  alias DataStructures.TodoDbPoolboy
   alias DataStructures.TodoProcessRegistry
   alias DataStructures.TodoCache
+  alias DataStructures.TodoWeb
 
   def start_link do
     Supervisor.start_link(__MODULE__, nil)
@@ -14,8 +15,9 @@ defmodule DataStructures.TodoSystem do
     Supervisor.init(
       [
         TodoProcessRegistry,
-        TodoDbSupervisor,
-        TodoCache
+        TodoDbPoolboy,
+        TodoCache,
+        TodoWeb
         # TodoMetrics
       ],
       strategy: :one_for_one
