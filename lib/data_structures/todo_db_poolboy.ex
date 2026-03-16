@@ -1,9 +1,9 @@
 defmodule DataStructures.TodoDbPoolboy do
   alias DataStructures.TodoDatabaseWorker
-  @db_folder "./persist"
 
   def child_spec(_) do
-    File.mkdir_p!(@db_folder)
+    db_folder = Application.fetch_env!(:data_structures, :db_folder)
+    File.mkdir_p!(db_folder)
 
     :poolboy.child_spec(
       __MODULE__,
@@ -12,7 +12,7 @@ defmodule DataStructures.TodoDbPoolboy do
         worker_module: TodoDatabaseWorker,
         size: 3
       ],
-      db_folder: @db_folder
+      db_folder: db_folder
     )
   end
 
