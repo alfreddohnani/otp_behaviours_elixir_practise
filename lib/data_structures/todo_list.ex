@@ -67,23 +67,3 @@ defmodule DataStructures.TodoList do
 end
 
 alias DataStructures.TodoList
-
-# todo_list =
-#   TodoList.new()
-#   |> TodoList.add_entry(%{date: ~D[2023-12-19], title: "Dentist"})
-#   |> TodoList.add_entry(%{date: ~D[2023-12-20], title: "Shopping"})
-#   |> TodoList.add_entry(%{date: ~D[2023-12-19], title: "Movies"})
-
-# todo_list =
-# TodoList.new([
-#   %{date: ~D[2023-12-19], title: "Dentist"},
-#   %{date: ~D[2023-12-20], title: "Shopping"},
-#   %{date: ~D[2023-12-19], title: "Movies"}
-# ])
-
-# IO.inspect(todo_list, label: "TODOS")
-
-# TodoList.update_entry(todo_list, 1, &Map.put(&1, :date, ~D[2023-12-20]))
-# |> IO.inspect(label: "UPDATED ENTRY 1")
-# |> TodoList.delete_entry(1)
-# |> IO.inspect(label: "AFTER DELETE")

@@ -15,14 +15,3 @@ defmodule DataStructures.CsvImporter do
     |> TodoList.new()
   end
 end
-
-alias DataStructures.CsvImporter
-alias DataStructures.TodoList
-todo_list = CsvImporter.import("todos.csv")
-
-IO.inspect(todo_list, label: "TODOS")
-
-TodoList.update_entry(todo_list, 1, &Map.put(&1, :date, ~D[2023-12-20]))
-|> IO.inspect(label: "UPDATED ENTRY 1")
-|> TodoList.delete_entry(1)
-|> IO.inspect(label: "AFTER DELETE")

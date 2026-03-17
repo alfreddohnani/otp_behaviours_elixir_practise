@@ -1,16 +1,21 @@
 defmodule DataStructures.TodoDatabaseWorker do
   use GenServer
 
-  def start_link(db_folder) do
-    GenServer.start_link(__MODULE__, db_folder)
+  def start_link(db_folder: db_folder) do
+    IO.puts("Starting todo database worker")
+
+    GenServer.start_link(
+      __MODULE__,
+      db_folder
+    )
   end
 
-  def store(db_worker_pid, key, data) do
-    GenServer.cast(db_worker_pid, {:store, key, data})
+  def store(db_worker_id, key, data) do
+    GenServer.call(db_worker_id, {:store, key, data})
   end
 
-  def get(db_worker_pid, key) do
-    GenServer.call(db_worker_pid, {:get, key})
+  def get(db_worker_id, key) do
+    GenServer.call(db_worker_id, {:get, key})
   end
 
   @impl GenServer
@@ -20,12 +25,12 @@ defmodule DataStructures.TodoDatabaseWorker do
   end
 
   @impl GenServer
-  def handle_cast({:store, key, data}, %{db_folder: db_folder} = state) do
+  def handle_call({:store, key, data}, _from, %{db_folder: db_folder} = state) do
     key
     |> file_name(db_folder)
     |> File.write!(:erlang.term_to_binary(data))
 
-    {:noreply, state}
+    {:reply, :ok, state}
   end
 
   @impl GenServer

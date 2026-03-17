@@ -1,9 +1,9 @@
 defmodule DataStructures.GenServerTodoList do
-  use GenServer
-  alias DataStructures.TodoDatabase
+  use GenServer, restart: :temporary
+
+  alias DataStructures.TodoDbPoolboy
   alias DataStructures.TodoList
   alias DataStructures.TodoEntry
-  alias DataStructures.GenServerTodoList
 
   @impl GenServer
   def init(list_name) do
@@ -12,14 +12,14 @@ defmodule DataStructures.GenServerTodoList do
 
   @impl GenServer
   def handle_continue(:init, {list_name, nil}) do
-    todo_list = TodoDatabase.get(list_name) || TodoList.new()
+    todo_list = TodoDbPoolboy.get(list_name) || TodoList.new()
     {:noreply, {list_name, todo_list}}
   end
 
   @impl GenServer
   def handle_cast({:add_entry, entry}, {list_name, state}) do
     new_list = TodoList.add_entry(state, entry)
-    TodoDatabase.store(list_name, new_list)
+    TodoDbPoolboy.store(list_name, new_list)
     {:noreply, {list_name, new_list}}
   end
 
@@ -44,8 +44,12 @@ defmodule DataStructures.GenServerTodoList do
     {:noreply, {list_name, state}}
   end
 
+  defp global_name(list_name) do
+    {:global, {__MODULE__, list_name}}
+  end
+
   def start_link(list_name) do
-    GenServer.start_link(GenServerTodoList, list_name)
+    GenServer.start_link(__MODULE__, list_name, name: global_name(list_name))
   end
 
   def add_entry(pid, %TodoEntry{} = entry) do
@@ -62,5 +66,12 @@ defmodule DataStructures.GenServerTodoList do
 
   def entries(pid, date) do
     GenServer.call(pid, {:entries, date})
+  end
+
+  def whereis(list_name) do
+    case :global.whereis_name({__MODULE__, list_name}) do
+      :undefined -> nil
+      pid -> pid
+    end
   end
 end
