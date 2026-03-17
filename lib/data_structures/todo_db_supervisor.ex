@@ -25,20 +25,4 @@ defmodule DataStructures.TodoDbSupervisor do
       type: :supervisor
     }
   end
-
-  def store(key, data) do
-    key
-    |> choose_worker
-    |> TodoDatabaseWorker.store(key, data)
-  end
-
-  def get(key) do
-    key
-    |> choose_worker
-    |> TodoDatabaseWorker.get(key)
-  end
-
-  defp choose_worker(key) do
-    :erlang.phash2(key, @pool_size) + 1
-  end
 end

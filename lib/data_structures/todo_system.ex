@@ -2,7 +2,6 @@ defmodule DataStructures.TodoSystem do
   use Supervisor
 
   alias DataStructures.TodoDbPoolboy
-  alias DataStructures.TodoProcessRegistry
   alias DataStructures.TodoCache
   alias DataStructures.TodoWeb
 
@@ -14,7 +13,6 @@ defmodule DataStructures.TodoSystem do
   def init(_) do
     Supervisor.init(
       [
-        TodoProcessRegistry,
         TodoDbPoolboy,
         TodoCache,
         TodoWeb

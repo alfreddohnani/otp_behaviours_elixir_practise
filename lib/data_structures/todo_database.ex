@@ -9,11 +9,6 @@ defmodule DataStructures.TodoDatabase do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
-  def store(key, data) do
-    db_worker_pid = choose_worker(key)
-    TodoDatabaseWorker.store(db_worker_pid, key, data)
-  end
-
   def get(key) do
     db_worker_pid = choose_worker(key)
     TodoDatabaseWorker.get(db_worker_pid, key)

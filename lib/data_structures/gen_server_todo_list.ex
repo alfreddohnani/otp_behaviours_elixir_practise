@@ -2,7 +2,6 @@ defmodule DataStructures.GenServerTodoList do
   use GenServer, restart: :temporary
 
   alias DataStructures.TodoDbPoolboy
-  alias DataStructures.TodoProcessRegistry
   alias DataStructures.TodoList
   alias DataStructures.TodoEntry
 
@@ -45,12 +44,12 @@ defmodule DataStructures.GenServerTodoList do
     {:noreply, {list_name, state}}
   end
 
-  defp via_tuple(list_name) do
-    TodoProcessRegistry.via_tuple({__MODULE__, list_name})
+  defp global_name(list_name) do
+    {:global, {__MODULE__, list_name}}
   end
 
   def start_link(list_name) do
-    GenServer.start_link(__MODULE__, list_name, name: via_tuple(list_name))
+    GenServer.start_link(__MODULE__, list_name, name: global_name(list_name))
   end
 
   def add_entry(pid, %TodoEntry{} = entry) do
@@ -67,5 +66,12 @@ defmodule DataStructures.GenServerTodoList do
 
   def entries(pid, date) do
     GenServer.call(pid, {:entries, date})
+  end
+
+  def whereis(list_name) do
+    case :global.whereis_name({__MODULE__, list_name}) do
+      :undefined -> nil
+      pid -> pid
+    end
   end
 end

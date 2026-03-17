@@ -11,7 +11,7 @@ defmodule DataStructures.TodoDatabaseWorker do
   end
 
   def store(db_worker_id, key, data) do
-    GenServer.cast(db_worker_id, {:store, key, data})
+    GenServer.call(db_worker_id, {:store, key, data})
   end
 
   def get(db_worker_id, key) do
@@ -19,34 +19,18 @@ defmodule DataStructures.TodoDatabaseWorker do
   end
 
   @impl GenServer
-  @spec init(
-          binary()
-          | maybe_improper_list(
-              binary() | maybe_improper_list(any(), binary() | []) | char(),
-              binary() | []
-            )
-        ) ::
-          {:ok,
-           %{
-             db_folder:
-               binary()
-               | maybe_improper_list(
-                   binary() | maybe_improper_list(any(), binary() | []) | char(),
-                   binary() | []
-                 )
-           }}
   def init(db_folder) do
     File.mkdir_p!(db_folder)
     {:ok, %{db_folder: db_folder}}
   end
 
   @impl GenServer
-  def handle_cast({:store, key, data}, %{db_folder: db_folder} = state) do
+  def handle_call({:store, key, data}, _from, %{db_folder: db_folder} = state) do
     key
     |> file_name(db_folder)
     |> File.write!(:erlang.term_to_binary(data))
 
-    {:noreply, state}
+    {:reply, :ok, state}
   end
 
   @impl GenServer
